@@ -6,7 +6,7 @@ from app.models.user import User
 
 user_bp = Blueprint("user", __name__, url_prefix="/users")
 
-@user_bp.route("", methods=["POST"])
+@user_bp.route("/signup", methods=["POST"])
 def create_user():
     request_body = request.get_json()[0]
     
