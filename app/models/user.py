@@ -13,10 +13,10 @@ class User(db.Model):
     location = db.Column(db.String(100))
     
     # constructor
-    def __init__(self, username, email, secret):
-        self.username = username
-        self.email = email
-        self.secret = secret
+    # def __init__(self, username, email, secret):
+    #     self.username = username
+    #     self.email = email
+    #     self.secret = secret
         
     def make_user_json(self):
         return {
