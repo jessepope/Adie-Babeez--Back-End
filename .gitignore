@@ -109,10 +109,10 @@ celerybeat.pid
 
 # Environments
 .env
-venv
+
 __pycache__
 .vscode
-.venv
+
 env/
 ENV/
 env.bak/
