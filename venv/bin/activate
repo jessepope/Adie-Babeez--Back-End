@@ -37,7 +37,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="/Users/jessepope/developer/ada/capstone/adie-babeez/back-end/Adie-Babeez--Back-End/venv"
+VIRTUAL_ENV="/Users/elliewong/Documents/Coding/Ada/Capstone/Adie-Babeez--Back-End/venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

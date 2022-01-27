@@ -3,33 +3,37 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from dotenv import load_dotenv
 import os
+from flask_cors import CORS
 
 db = SQLAlchemy()
 migrate = Migrate()
 load_dotenv()
-
 
 def create_app(test_config=None):
     app = Flask(__name__)
     # app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False **we need to find out what this is and if we need it
 
     if test_config is None:
-        app.config["INSERT DATABASE URI"] = os.environ.get(
-            "INSERT DATABASE URI")
+        app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+            "DATABASE_URI")
     else:
         app.config["TESTING"] = True
-        app.config[" INSERT DATABASE URI"] = os.environ.get(
-            "ISERT TEXT DATABASE URI")
+        app.config["SQLALCHEMY_TEST_DATABASE_URI"] = os.environ.get(
+            "TEST_DATABASE_URI")
 
     from app.models.user import User
     from app.models.post import Post
+    from app.models.comment import Comment
+    
 
+    # Setup DB
     db.init_app(app)
     migrate.init_app(app, db)
 
-    # from routesfile import route bp name
-    # app.register_blueprint(route bp name)
+    # Register blueprints here
+    from .routes_user import user_bp
+    app.register_blueprint(user_bp)
 
 
-
+    CORS(app)
     return app
