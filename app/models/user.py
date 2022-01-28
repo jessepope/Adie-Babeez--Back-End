@@ -12,6 +12,7 @@ class User(db.Model):
     campus = db.Column(db.String(100))
     about_me = db.Column(db.String(100))
     location = db.Column(db.String(100))
+    posts = db.relationship('Post', backref='user', lazy='dynamic', cascade='all,delete-orphan')
     
     # # constructor
     # def __init__(self, username, email, secret):

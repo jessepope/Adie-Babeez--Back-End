@@ -5,8 +5,23 @@ import datetime
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    title = db.Column(db.String)
-    text = db.Column(db.String)
-    date_posted = db.Column(db.DateTime)
-    likes = db.Column(db.Integer)
+    title = db.Column(db.String, nullable=False)
+    text = db.Column(db.String, nullable=False)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    likes = db.Column(db.Integer, default=0)
+    location = db.Column(db.String(100))   # need api
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
+    comments = db.relationship('Comment', backref='post', lazy='dynamic', cascade='all,delete-orphan')
+    
+
+    def make_post_json(self):
+        return {
+                "post_id": self.id,
+                "title": self.title,
+                "text": self.text, 
+                "date_posted": self.date_posted,
+                "likes": self.likes,
+                "location": self.location,
+                "user_id": self.user_id
+        }
+    

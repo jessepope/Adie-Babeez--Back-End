@@ -1,5 +1,6 @@
 from crypt import methods
 import email
+from ssl import OP_NO_RENEGOTIATION
 from flask import Blueprint, request, jsonify, make_response
 from app import db
 from app.models.user import User
@@ -11,7 +12,10 @@ def create_user():
     request_body = request.get_json()[0]
     
     try: 
-        new_user = User(username=request_body['username'], email=request_body['email'], secret=request_body['secret'])
+        new_user = User(username=request_body['username'], 
+                        email=request_body['email'], 
+                        secret=request_body['secret']
+                        )
         
         db.session.add(new_user)
         db.session.commit()
@@ -33,7 +37,7 @@ def get_all_users():
     all_users_response = [(user.make_user_json()) for user in all_users]
     return jsonify(all_users_response), 200
 
-@user_bp.route("/<user_id>", methods=["GET"])
+@user_bp.route("/profile/<user_id>", methods=["GET"])
 def get_a_specific_users(user_id):
     try: 
         user = User.query.get(user_id)
@@ -41,17 +45,21 @@ def get_a_specific_users(user_id):
     except:
         return  {"details": f"User {user_id} not found"}, 404
 
-@user_bp.route("/login/verify", methods=["GET"])
+@user_bp.route("/login/verify", methods=["GET"]) 
 def verify_a_specific_user():
     request_body = request.get_json()[0]
-    # input_username = request_body['username']
-    input_email = request_body['email']
-    input_secret = request_body['secret']
+    if len(request_body) < 2:
+        return jsonify([{"message":"missing email/username or password"}]), 404
+    for key in request_body.keys():
+        if key == "email":
+            input_email = request_body['email']
+            user = User.query.filter_by(email = input_email).first()
+        if key == "username":
+            input_username = request_body['username']
+            user = User.query.filter_by(username = input_username).first()
+        if key == "secret":
+            input_secret = request_body['secret']
 
-    if input_email:
-        user = User.query.filter_by(email = input_email).first()
-    # elif input_username:
-    #     user = User.query.filter(username = input_username).first()
     if user:
         if user.secret == input_secret:
             return jsonify([{"message":"login successfully"}]), 200
@@ -68,3 +76,45 @@ def delete_all_user():
         db.session.delete(user)
         db.session.commit()
     return {"details": "all users were successfully deleted"}, 200
+
+@user_bp.route("/<user_id>", methods=["DELETE"])
+def delete_a_specific_user(user_id):
+    try: 
+        user = User.query.get(user_id)
+        db.session.delete(user)
+        db.session.commit()
+        return {"details": "User was successfully deleted"}, 200
+    except:
+        return  {"details": f"User {user_id} not found"}, 404
+
+# @user_bp.route("/profile/<user_id>", methods=["PUT"])
+# def update_user_profile(user_id):
+#     try: 
+#         user = User.query.get(user_id)
+#         request_body = request.get_json()[0]
+#         for key, value in request_body.items():   # key ?
+    
+#             user.key = value
+            
+#             user.username = request_body["username"]
+
+#         db.session.commit()
+#         return {"details": "User was successfully updated"}, 200
+#     except:
+#         return  {"details": f"User {user_id} not found"}, 404
+
+
+
+
+
+
+# update /patch user's info
+
+# username: elly
+# email:elly@ elly.com
+# password: 123
+# campus: Maple
+# about_me: Hi 
+
+
+# update user's location with google api
