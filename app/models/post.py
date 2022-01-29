@@ -7,7 +7,7 @@ class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String, nullable=False)
     text = db.Column(db.String, nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    # date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     likes = db.Column(db.Integer, default=0)
     location = db.Column(db.String(100))   # need api
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
