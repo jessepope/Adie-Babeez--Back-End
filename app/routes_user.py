@@ -16,7 +16,7 @@ def create_user():
         new_user = User.from_json(request_body)
         db.session.add(new_user)
         db.session.commit()
-        return make_response(new_user.make_user_json()), 200
+        return jsonify(new_user.make_user_json()), 200
 
     except KeyError as err:
         if "username" in err.args:
@@ -45,13 +45,9 @@ def all_users():
 
 
 @user_bp.route("/users/profile", methods=["GET", "DELETE", "PUT"])
-
-# since we store user data in global state variable currentUser, we will not use userid in URL
-# instead, user info will be stored in global variable and used to render, so URL will be only /profile
-# we need to update and test this when we build the profile in FE
 def edit_a_specific_users():
     request_body = request.get_json()[0]
-    user_id = request_body["id"]  # need to confirm the key name
+    user_id = request_body["user_id"]  
     user = User.query.get(user_id)
     # get a user
     if request.method == "GET":
@@ -106,48 +102,5 @@ def verify_a_specific_user():
             return jsonify([{"message": "invalid password"}]), 400
     else:
         return jsonify([{"message": "invalid username or email"}]), 400
-
-
-# @user_bp.route("", methods=["DELETE"])
-# def delete_all_user():
-#     all_users = User.query.all()
-#     for user in all_users:
-#         db.session.delete(user)
-#         db.session.commit()
-#     return {"details": "all users were successfully deleted"}, 200
-
-
-
-
-# since we store user data in global state variable currentUser, we will not use userid in URL
-# instead, user info will be stored in global variable and used to render, so URL will be only /delete
-# we need to update and test this when we build the profile in FE and add a delete my profile button
-# @user_bp.route("/<user_id>", methods=["DELETE"])
-# def delete_a_specific_user(user_id):
-#     try:
-#         user = User.query.get(user_id)
-#         db.session.delete(user)
-#         db.session.commit()
-#         return {"details": "User was successfully deleted"}, 200
-#     except:
-#         return {"details": f"User {user_id} not found"}, 404
-
-
-
-# since we store user data in global state variable currentUser, we will not use userid in URL
-# instead, user info will be stored in global variable and used to render, so URL will be only /updateprofile
-# we need to update and test this when we build the profile in FE and add a update my profile button
-# @user_bp.route("/profile/<user_id>", methods=["PUT"])
-
-
-
-# update /patch user's info
-
-# username: Mary
-# email:elly@ elly.com
-# password: 123
-# campus: Maple
-# about_me: Hi
-
 
 # update user's location with google api

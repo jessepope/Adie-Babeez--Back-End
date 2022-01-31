@@ -16,7 +16,7 @@ class User(db.Model):
     posts = db.relationship('Post', backref='user', lazy='dynamic', cascade='all,delete-orphan')
 
     
-    @classmethod
+    @classmethod        # from FE to BE
     def from_json(cls, request_body):
         return cls(
             username=request_body['username'],
@@ -28,7 +28,7 @@ class User(db.Model):
             bio=request_body['bio'],
             location=request_body['location'])
     
-
+    # from BE to FE
     def make_user_json(self):
         return {
                 "user_id": self.id,
@@ -36,9 +36,9 @@ class User(db.Model):
                 "pronouns": self.pronouns,
                 "email": self.email, 
                 "secret": self.secret,
-                "class_name": self.class_name,
+                "className": self.class_name,
                 "campus": self.campus,
                 "bio": self.bio,
                 "location": self.location,
-                "posts": self.posts  
+                # "posts": self.posts  
         }
