@@ -15,7 +15,12 @@ def create_user():
     try:
         new_user = User(username=request_body['username'],
                         email=request_body['email'],
-                        secret=request_body['secret']
+                        secret=request_body['secret'],
+                        pronouns=request_body['pronouns'],
+                        class_name=request_body['className'],
+                        campus=request_body['campus'],
+                        bio=request_body['bio'],
+                        location=request_body['location']
                         )
 
         db.session.add(new_user)
@@ -29,7 +34,7 @@ def create_user():
         if "email" in err.args:
             return {"details": f"Request body must include email with string type."}, 400
         if "secret" in err.args:
-            return {"details": f"Request body must include secret with string type."}, 400
+            return {"details": f"Request body must include password with string type."}, 400
 
 
 @user_bp.route("", methods=["GET"])
@@ -39,6 +44,10 @@ def get_all_users():
     return jsonify(all_users_response), 200
 
 
+
+# since we store user data in global state variable currentUser, we will not use userid in URL
+# instead, user info will be stored in global variable and used to render, so URL will be only /profile
+# we need to update and test this when we build the profile in FE
 @user_bp.route("/profile/<user_id>", methods=["GET"])
 def get_a_specific_users(user_id):
     try:
@@ -46,6 +55,8 @@ def get_a_specific_users(user_id):
         return user.make_user_json(), 200
     except:
         return {"details": f"User {user_id} not found"}, 404
+
+
 
 
 @user_bp.route("/login/verify", methods=["GET"])
@@ -57,15 +68,16 @@ def verify_a_specific_user():
         if key == "email":
             input_email = request_body['email']
             user = User.query.filter_by(email=input_email).first()
-        if key == "username":
-            input_username = request_body['username']
-            user = User.query.filter_by(username=input_username).first()
+        # if key == "username":
+        #     input_username = request_body['username']
+        #     user = User.query.filter_by(username=input_username).first()
         if key == "secret":
             input_secret = request_body['secret']
 
     if user:
         if user.secret == input_secret:
-            return jsonify([{"message": "login successfully"}]), 200
+            # send user dict back to use in FE to render user data
+            return jsonify([{user}]), 200
         else:
             return jsonify([{"message": "invalid password"}]), 400
     else:
@@ -81,6 +93,11 @@ def delete_all_user():
     return {"details": "all users were successfully deleted"}, 200
 
 
+
+
+# since we store user data in global state variable currentUser, we will not use userid in URL
+# instead, user info will be stored in global variable and used to render, so URL will be only /delete
+# we need to update and test this when we build the profile in FE and add a delete my profile button
 @user_bp.route("/<user_id>", methods=["DELETE"])
 def delete_a_specific_user(user_id):
     try:
@@ -91,6 +108,11 @@ def delete_a_specific_user(user_id):
     except:
         return {"details": f"User {user_id} not found"}, 404
 
+
+
+# since we store user data in global state variable currentUser, we will not use userid in URL
+# instead, user info will be stored in global variable and used to render, so URL will be only /updateprofile
+# we need to update and test this when we build the profile in FE and add a update my profile button
 @user_bp.route("/profile/<user_id>", methods=["PUT"])
 def update_user_profile(user_id):
     try:
