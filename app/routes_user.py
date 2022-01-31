@@ -1,6 +1,3 @@
-from crypt import methods
-import email
-from ssl import OP_NO_RENEGOTIATION
 from flask import Blueprint, request, jsonify, make_response
 from app import db
 from app.models.user import User
