@@ -5,7 +5,7 @@ from flask import Blueprint, request, jsonify, make_response
 from app import db
 from app.models.user import User
 
-user_bp = Blueprint("user", __name__, url_prefix="/users")
+user_bp = Blueprint("user", __name__, url_prefix="")
 
 
 @user_bp.route("/signup", methods=["POST"])
@@ -13,14 +13,9 @@ def create_user():
     request_body = request.get_json()[0]
 
     try:
-        new_user = User(username=request_body['username'],
-                        email=request_body['email'],
-                        secret=request_body['secret']
-                        )
-
+        new_user = User.from_json(request_body)
         db.session.add(new_user)
         db.session.commit()
-
         return make_response(new_user.make_user_json()), 200
 
     except KeyError as err:
@@ -32,27 +27,49 @@ def create_user():
             return {"details": f"Request body must include secret with string type."}, 400
 
 
-@user_bp.route("", methods=["GET"])
-def get_all_users():
-    all_users = User.query.all()
-    all_users_response = [(user.make_user_json()) for user in all_users]
-    return jsonify(all_users_response), 200
+@user_bp.route("/users", methods=["GET", "DELETE"])
+def all_users():
+    # get all users
+    if request.methods == "GET":
+        all_users = User.query.all()
+        all_users_response = [(user.make_user_json()) for user in all_users]
+        return jsonify(all_users_response), 200
+    
+    # delete all users
+    else:
+        all_users = User.query.all()
+        for user in all_users:
+            db.session.delete(user)
+            db.session.commit()
+        return {"details": "all users were successfully deleted"}, 200
 
 
-@user_bp.route("/profile/<user_id>", methods=["GET"])
+@user_bp.route("/users/<user_id>", methods=["GET", "DELETE"])
 def get_a_specific_users(user_id):
-    try:
-        user = User.query.get(user_id)
-        return user.make_user_json(), 200
-    except:
-        return {"details": f"User {user_id} not found"}, 404
+    # get a user
+    if request.method == "GET":
+        try:
+            user = User.query.get(user_id)
+            return user.make_user_json(), 200
+        except:
+            return {"details": f"User {user_id} not found"}, 404
+    # delete a user
+    else:
+        try:
+            user = User.query.get(user_id)
+            db.session.delete(user)
+            db.session.commit()
+            return {"details": "User was successfully deleted"}, 200
+        except:
+            return {"details": f"User {user_id} not found"}, 404
 
 
-@user_bp.route("/login/verify", methods=["GET"])
+@user_bp.route("/login", methods=["GET"])
 def verify_a_specific_user():
     request_body = request.get_json()[0]
     if len(request_body) < 2:
         return jsonify([{"message": "missing email/username or password"}]), 404
+    
     for key in request_body.keys():
         if key == "email":
             input_email = request_body['email']
@@ -62,7 +79,6 @@ def verify_a_specific_user():
             user = User.query.filter_by(username=input_username).first()
         if key == "secret":
             input_secret = request_body['secret']
-
     if user:
         if user.secret == input_secret:
             return jsonify([{"message": "login successfully"}]), 200
@@ -72,34 +88,11 @@ def verify_a_specific_user():
         return jsonify([{"message": "invalid username or email"}]), 400
 
 
-@user_bp.route("", methods=["DELETE"])
-def delete_all_user():
-    all_users = User.query.all()
-    for user in all_users:
-        db.session.delete(user)
-        db.session.commit()
-    return {"details": "all users were successfully deleted"}, 200
-
-
-@user_bp.route("/<user_id>", methods=["DELETE"])
-def delete_a_specific_user(user_id):
-    try:
-        user = User.query.get(user_id)
-        db.session.delete(user)
-        db.session.commit()
-        return {"details": "User was successfully deleted"}, 200
-    except:
-        return {"details": f"User {user_id} not found"}, 404
-
 @user_bp.route("/profile/<user_id>", methods=["PUT"])
 def update_user_profile(user_id):
     try:
         user = User.query.get(user_id)
         request_body = request.get_json()[0]
-        # for key, value in request_body.items():   # key ?
-        #     user.key = value
-
-            
         user.username = request_body["username"]
         user.secret = request_body['secret']
         user.email = request_body['email']
