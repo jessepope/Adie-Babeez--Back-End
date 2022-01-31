@@ -6,53 +6,39 @@ from flask import current_app
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(50), unique= True, nullable=False)
+    pronouns = db.Column(db.String(50))
     email = db.Column(db.String(80), unique=True, nullable=False)
-    secret = db.Column(db.String(100), nullable=False)
-    class_name = db.Column(db.String(100), default="")
-    campus = db.Column(db.String(100), default="")
-    about_me = db.Column(db.String(100), default="")
-    location = db.Column(db.String(100), default="")
+    secret = db.Column(db.String(50), nullable=False)
+    class_name = db.Column(db.String(50))
+    campus = db.Column(db.String(50))
+    bio = db.Column(db.String(100))
+    location = db.Column(db.String(50))
     posts = db.relationship('Post', backref='user', lazy='dynamic', cascade='all,delete-orphan')
-    
-    # # # constructor
-    # def __init__(self, username, email, secret):
-    #     self.username = username
-    #     self.email = email
-    #     self.secret = secret
-    
+
     
     @classmethod
     def from_json(cls, request_body):
-        for key in request_body.keys():
-            if key == "username":
-                username = request_body['username']
-            if key == "email":
-                email = request_body['email']
-            if key == "secret":
-                secret = request_body['secret']
-            if key == "class_name":
-                class_name = request_body['class_name']
-            if key == "campus":
-                campus = request_body['class_name']
-            if key == "about_me":
-                about_me = request_body['about_me']
-            if key == "location":
-                location = request_body['location']
         return cls(
-            username=username,
-            email=email,
-            secret=secret, 
-            class_name = class_name, 
-            campus = campus, 
-            about_me = about_me, 
-            location = location)
+            username=request_body['username'],
+            email=request_body['email'],
+            secret=request_body['secret'],
+            pronouns=request_body['pronouns'],
+            class_name=request_body['className'],
+            campus=request_body['campus'],
+            bio=request_body['bio'],
+            location=request_body['location'])
     
 
     def make_user_json(self):
         return {
                 "user_id": self.id,
                 "username": self.username,
+                "pronouns": self.pronouns,
                 "email": self.email, 
-                "secret": self.secret, 
-                "class_name": 
+                "secret": self.secret,
+                "class_name": self.class_name,
+                "campus": self.campus,
+                "bio": self.bio,
+                "location": self.location,
+                "posts": self.posts  
         }

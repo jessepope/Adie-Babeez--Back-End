@@ -1,8 +1,8 @@
-"""created basic models
+"""empty message
 
-Revision ID: d51ac36464f6
+Revision ID: 0e04c45559fe
 Revises: 
-Create Date: 2022-01-27 07:15:58.326414
+Create Date: 2022-01-31 10:40:43.118905
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'd51ac36464f6'
+revision = '0e04c45559fe'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,22 +21,23 @@ def upgrade():
     op.create_table('user',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('username', sa.String(length=50), nullable=False),
+    sa.Column('pronouns', sa.String(length=50), nullable=True),
     sa.Column('email', sa.String(length=80), nullable=False),
-    sa.Column('secret', sa.String(length=100), nullable=False),
-    sa.Column('class_name', sa.String(length=100), nullable=True),
-    sa.Column('campus', sa.String(length=100), nullable=True),
-    sa.Column('about_me', sa.String(length=100), nullable=True),
-    sa.Column('location', sa.String(length=100), nullable=True),
+    sa.Column('secret', sa.String(length=50), nullable=False),
+    sa.Column('class_name', sa.String(length=50), nullable=True),
+    sa.Column('campus', sa.String(length=50), nullable=True),
+    sa.Column('bio', sa.String(length=100), nullable=True),
+    sa.Column('location', sa.String(length=50), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('email'),
     sa.UniqueConstraint('username')
     )
     op.create_table('post',
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
-    sa.Column('title', sa.String(), nullable=True),
-    sa.Column('text', sa.String(), nullable=True),
-    sa.Column('date_posted', sa.DateTime(), nullable=True),
+    sa.Column('title', sa.String(), nullable=False),
+    sa.Column('text', sa.String(), nullable=False),
     sa.Column('likes', sa.Integer(), nullable=True),
+    sa.Column('location', sa.String(length=100), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['user.id'], ),
     sa.PrimaryKeyConstraint('id')
