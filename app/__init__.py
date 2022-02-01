@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from dotenv import load_dotenv
 import os
-# from flask_cors import CORS
+from flask_cors import CORS
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -33,7 +33,9 @@ def create_app(test_config=None):
     # Register blueprints here
     from .routes_user import user_bp
     app.register_blueprint(user_bp)
+    from .routes_post import post_bp
+    app.register_blueprint(post_bp)
 
 
-    # CORS(app)
+    CORS(app)
     return app

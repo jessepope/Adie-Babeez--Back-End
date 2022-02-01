@@ -12,7 +12,6 @@ class User(db.Model):
     class_name = db.Column(db.String(50))
     campus = db.Column(db.String(50))
     bio = db.Column(db.String(100))
-    location = db.Column(db.String(50))
     posts = db.relationship('Post', backref='user', lazy='dynamic', cascade='all,delete-orphan')
 
     
@@ -25,8 +24,7 @@ class User(db.Model):
             pronouns=request_body['pronouns'],
             class_name=request_body['className'],
             campus=request_body['campus'],
-            bio=request_body['bio'],
-            location=request_body['location'])
+            bio=request_body['bio'],)
     
     # from BE to FE
     def make_user_json(self):
@@ -39,6 +37,5 @@ class User(db.Model):
                 "className": self.class_name,
                 "campus": self.campus,
                 "bio": self.bio,
-                "location": self.location,
                 # "posts": self.posts  
         }

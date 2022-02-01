@@ -24,17 +24,16 @@ def create_user():
             return {"details": f"Request body must include password with string type."}, 400
 
 
-@user_bp.route("/users", methods=["GET", "DELETE"])
+@user_bp.route("/users/all", methods=["GET", "DELETE"])
 def all_users():
+    all_users = User.query.all()
     # get all users
     if request.method == "GET":
-        all_users = User.query.all()
         all_users_response = [(user.make_user_json()) for user in all_users]
         return jsonify(all_users_response), 200
     
     # delete all users
     else:
-        all_users = User.query.all()
         for user in all_users:
             db.session.delete(user)
             db.session.commit()
@@ -72,7 +71,6 @@ def edit_a_specific_users():
             user.class_name=request_body['className'],
             user.campus=request_body['campus'],
             user.bio=request_body['bio'],
-            user.location=request_body['location']
             db.session.commit()
             return make_response(user.make_user_json()), 200
         else:
