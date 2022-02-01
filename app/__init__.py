@@ -1,4 +1,4 @@
-import tkinter
+import _tkinter
 import sys
 
 from flask import Flask

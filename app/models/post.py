@@ -3,7 +3,7 @@ from xmlrpc.client import DateTime
 from app import db
 from flask import current_app
 import datetime
-import tkinter
+import _tkinter
 import sys
 
 class Post(db.Model):
