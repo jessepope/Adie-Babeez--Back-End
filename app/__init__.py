@@ -1,6 +1,5 @@
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
+import tkinter
+import sys
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy

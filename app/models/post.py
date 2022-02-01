@@ -1,12 +1,10 @@
-from pydoc import text
-import matplotlib
-matplotlib.use('Agg')
-import matplotlib.pyplot as plt
 from turtle import title
 from xmlrpc.client import DateTime
 from app import db
 from flask import current_app
 import datetime
+import tkinter
+import sys
 
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
