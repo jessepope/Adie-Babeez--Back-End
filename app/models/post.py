@@ -1,4 +1,7 @@
 from pydoc import text
+import matplotlib
+matplotlib.use('Agg')
+import matplotlib.pyplot as plt
 from turtle import title
 from xmlrpc.client import DateTime
 from app import db
