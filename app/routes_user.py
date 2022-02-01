@@ -1,8 +1,6 @@
 from flask import Blueprint, request, jsonify, make_response
 from app import db
 from app.models.user import User
-import _tkinter
-import sys
 
 user_bp = Blueprint("user", __name__, url_prefix="")
 
