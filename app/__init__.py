@@ -1,4 +1,3 @@
-import _tkinter
 import sys
 from tkinter import *
 
@@ -7,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from dotenv import load_dotenv
 import os
+
 
 # from flask_cors import CORS
 
