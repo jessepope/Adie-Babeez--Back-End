@@ -1,5 +1,6 @@
 import _tkinter
 import sys
+from tkinter import *
 
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
