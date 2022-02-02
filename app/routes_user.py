@@ -79,6 +79,7 @@ def edit_a_specific_users():
 
 @user_bp.route("/login", methods=["GET"])
 def verify_a_specific_user():
+    print(request.get_json())
     request_body = request.get_json()[0]
     if len(request_body) < 2:
         return jsonify([{"message": "missing email/username or password"}]), 404

@@ -30,7 +30,6 @@ class Post(db.Model):
             title=request_body['title'],
             text=request_body['text'],
             # date_posted=request_body['date_posted'],
-            likes=request_body['likes'],
             # comments=request_body['comments'],
             user_id=request_body['user_id']
             )
