@@ -20,7 +20,7 @@ def create_user():
             return {"details": f"Request body must include username with string type."}, 400
         if "email" in err.args:
             return {"details": f"Request body must include email with string type."}, 400
-        if "secret" in err.args:
+        if "password" in err.args:
             return {"details": f"Request body must include password with string type."}, 400
 
 
@@ -66,9 +66,9 @@ def edit_a_specific_users():
         if user:
             user.username=request_body['username'],
             user.email=request_body['email'],
-            user.secret=request_body['secret'],
+            user.password=request_body['password'],
             user.pronouns=request_body['pronouns'],
-            user.class_name=request_body['className'],
+            user.class_name=request_body['class_name'],
             user.campus=request_body['campus'],
             user.bio=request_body['bio'],
             db.session.commit()
@@ -87,10 +87,10 @@ def verify_a_specific_user():
         if key == "email":
             input_email = request_body['email']
             user = User.query.filter_by(email=input_email).first()
-        if key == "secret":
-            input_secret = request_body['secret']
+        if key == "password":
+            input_password = request_body['password']
     if user:
-        if user.secret == input_secret:
+        if user.password == input_password:
             # send user dict back to use in FE to render user data
             return user.make_user_json(), 200
         else:

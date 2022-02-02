@@ -67,9 +67,12 @@ def all_posts_a_user():
 #         # get all posts of a specific user
 #         if request.method == "GET":
 #             return jsonify(post.make_post_json()), 200
+        
 #         # delete all posts of a user
 #         elif request.method == "DELETE":
 #             db.session.delete(post)
 #             db.session.commit()
 #             return {"details": "post was successfully deleted"}, 200
-#         # elif request.method == "PUT":
+
+#         elif request.method == "PUT":
+        
