@@ -9,7 +9,7 @@ class Post(db.Model):
     # date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     likes = db.Column(db.Integer, default=0)
     # location = db.Column(db.String(100))   # need api
-    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     comments = db.relationship('Comment', backref='post', lazy='dynamic', cascade='all,delete-orphan')
     
 
