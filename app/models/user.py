@@ -3,7 +3,6 @@ from sqlalchemy import VARCHAR
 from app import db
 from flask import current_app
 
-
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     username = db.Column(db.String(50), unique= True, nullable=False)

@@ -7,7 +7,7 @@ user_bp = Blueprint("user", __name__, url_prefix="")
 
 @user_bp.route("/signup", methods=["POST"])
 def create_user():
-    request_body = request.get_json()[0]
+    request_body = request.get_json()
 
     try:
         new_user = User.from_json(request_body)

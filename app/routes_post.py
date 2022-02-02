@@ -57,21 +57,25 @@ def all_posts_a_user():
             db.session.commit()
         return {"details": "all posts were successfully deleted"}, 200
 
-@post_bp.route("/user", methods=["GET", "DELETE"])
+@post_bp.route("/user", methods=["GET", "DELETE", "PUT"])
 def a_post_a_user():
     request_body = request.get_json()[0]
     user_id = request_body["user_id"]
     post_id = request_body["post_id"]  
     post = Post.query.filter_by(user_id=user_id, post_id=post_id)
-    # get all posts of a specific user
-    if request.method == "GET":
-        return jsonify(post.make_post_json()), 200
-    
-    # delete all posts of a user
-    else:
-        db.session.delete(post)
-        db.session.commit()
-        return {"details": "post was successfully deleted"}, 200
+    if post:
+        # get all posts of a specific user
+        if request.method == "GET":
+            return jsonify(post.make_post_json()), 200
+        
+        # delete all posts of a user
+        elif request.method == "DELETE":
+            db.session.delete(post)
+            db.session.commit()
+            return {"details": "post was successfully deleted"}, 200
+
+        elif request.method == "PUT":
+        
 
 
 
