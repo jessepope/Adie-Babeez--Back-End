@@ -2,7 +2,6 @@ from enum import unique
 from sqlalchemy import VARCHAR
 from app import db
 from flask import current_app
-import tkinter
 import sys
 
 class User(db.Model):
