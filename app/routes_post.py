@@ -25,19 +25,53 @@ def create_post():
 
 
 @post_bp.route("/all", methods=["GET", "DELETE"])
-def all_posts():
+def all_posts_all_users():
     all_posts = Post.query.all()
-    # get all posts
+    # get all posts of all users
     if request.method == "GET":
         all_posts_response = [(post.make_post_json()) for post in all_posts]
         return jsonify(all_posts_response), 200
     
-    # delete all users
+    # delete all posts of all users
     else:
         for post in all_posts:
             db.session.delete(post)
             db.session.commit()
         return {"details": "all posts were successfully deleted"}, 200
+
+@post_bp.route("/user/all", methods=["GET", "DELETE"])
+def all_posts_a_user():
+    
+    request_body = request.get_json()[0]
+    user_id = request_body["user_id"]  
+    all_posts = Post.query.filter_by(user_id=user_id)
+    # get all posts of a specific user
+    if request.method == "GET":
+        all_posts_response = [(post.make_post_json()) for post in all_posts]
+        return jsonify(all_posts_response), 200
+    
+    # delete all posts of a user
+    else:
+        for post in all_posts:
+            db.session.delete(post)
+            db.session.commit()
+        return {"details": "all posts were successfully deleted"}, 200
+
+@post_bp.route("/user", methods=["GET", "DELETE"])
+def a_post_a_user():
+    request_body = request.get_json()[0]
+    user_id = request_body["user_id"]
+    post_id = request_body["post_id"]  
+    post = Post.query.filter_by(user_id=user_id, post_id=post_id)
+    # get all posts of a specific user
+    if request.method == "GET":
+        return jsonify(post.make_post_json()), 200
+    
+    # delete all posts of a user
+    else:
+        db.session.delete(post)
+        db.session.commit()
+        return {"details": "post was successfully deleted"}, 200
 
 
 
