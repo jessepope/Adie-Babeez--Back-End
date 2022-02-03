@@ -11,17 +11,17 @@ from app.models.user import User
 
 post_bp = Blueprint("post", __name__, url_prefix="/posts")
 
-@post_bp.route("newpost", methods=["POST"])
+@post_bp.route("/newpost", methods=["POST"])
 def create_post():
     request_body = request.get_json()[0]
-    try: 
-        new_post = Post.from_json(request_body)
-        db.session.add(new_post)
-        db.session.commit()
-        return make_response(new_post.make_post_json()), 200
+    # try: 
+    new_post = Post.from_json(request_body)
+    db.session.add(new_post)
+    db.session.commit()
+    return make_response(new_post.make_post_json()), 200
     
-    except:
-        return {"error": "missing a key"}, 400
+    # except:
+    #     return {"error": "missing a key"}, 400
 
 
 @post_bp.route("/all", methods=["GET", "DELETE"])
@@ -39,7 +39,7 @@ def all_posts_all_users():
             db.session.commit()
         return {"details": "all posts were successfully deleted"}, 200
 
-@post_bp.route("/user/all", methods=["GET", "DELETE"])
+@post_bp.route("/<user_id>/all", methods=["GET", "DELETE"])
 def all_posts_a_user():
     
     request_body = request.get_json()[0]
@@ -57,7 +57,7 @@ def all_posts_a_user():
             db.session.commit()
         return {"details": "all posts were successfully deleted"}, 200
 
-@post_bp.route("/user", methods=["GET", "DELETE", "PUT"])
+@post_bp.route("/<post_id>", methods=["GET", "DELETE", "PUT"])
 def a_post_a_user():
     request_body = request.get_json()[0]
     user_id = request_body["user_id"]

@@ -1,14 +1,13 @@
 from app import db
 from flask import current_app
 import datetime
-
+# datetime.datetime.utcnow()
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String, nullable=False)
     text = db.Column(db.String, nullable=False)
-    # date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow())
     likes = db.Column(db.Integer, default=0)
-    # location = db.Column(db.String(100))   # need api
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
     comments = db.relationship('Comment', backref='post', lazy='dynamic', cascade='all,delete-orphan')
     
@@ -18,10 +17,10 @@ class Post(db.Model):
                 "post_id": self.id,
                 "title": self.title,
                 "text": self.text, 
-                # "date_posted": self.date_posted,
+                "date_posted": self.date_posted,
                 "likes": self.likes,
-                # "location": self.location,
                 "user_id": self.user_id
+                # "comments" : 
         }
         
     @classmethod        # from FE to BE
@@ -29,8 +28,6 @@ class Post(db.Model):
         return cls(
             title=request_body['title'],
             text=request_body['text'],
-            # date_posted=request_body['date_posted'],
-            # comments=request_body['comments'],
             user_id=request_body['user_id']
             )
     
