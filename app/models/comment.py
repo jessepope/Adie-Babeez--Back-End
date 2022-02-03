@@ -8,3 +8,5 @@ class Comment(db.Model):
     date_posted = db.Column(db.DateTime)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
     post_id = db.Column(db.Integer, db.ForeignKey("post.id"), nullable=True)
+
+# make helper function to turn python object into json so comments can be sent with post requests (refer to line 36 in post routes)

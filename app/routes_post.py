@@ -30,6 +30,12 @@ def all_posts_all_users():
     # get all posts of all users
     if request.method == "GET":
         all_posts_response = [(post.make_post_json()) for post in all_posts]
+        all_posts_response = []
+        for post in all_posts:
+            post_dict = post.make_post_json()
+            comments = post.comments.all()
+            post_dict["comments"] = comments
+            all_posts_response.append(post_dict)
         return jsonify(all_posts_response), 200
     
     # delete all posts of all users
