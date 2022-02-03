@@ -34,6 +34,7 @@ def all_posts_all_users():
         for post in all_posts:
             post_dict = post.make_post_json()
             comments = post.comments.all()
+            # for comment in comments, destructure into json object
             post_dict["comments"] = comments
             all_posts_response.append(post_dict)
         return jsonify(all_posts_response), 200
