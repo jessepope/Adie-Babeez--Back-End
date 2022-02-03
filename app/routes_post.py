@@ -11,7 +11,7 @@ from app.models.user import User
 
 post_bp = Blueprint("post", __name__, url_prefix="/posts")
 
-@post_bp.route("", methods=["POST"])
+@post_bp.route("newpost", methods=["POST"])
 def create_post():
     request_body = request.get_json()[0]
     try: 
