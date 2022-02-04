@@ -35,6 +35,8 @@ def create_app(test_config=None):
     app.register_blueprint(user_bp)
     from .routes_post import post_bp
     app.register_blueprint(post_bp)
+    from .routes_comment import comment_bp
+    app.register_blueprint(comment_bp)
 
 
     CORS(app)

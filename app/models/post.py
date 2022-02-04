@@ -1,7 +1,8 @@
 from app import db
 from flask import current_app
 import datetime
-# datetime.datetime.utcnow()
+from app.models.user import User
+
 class Post(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     title = db.Column(db.String, nullable=False)
@@ -13,14 +14,15 @@ class Post(db.Model):
     
 
     def make_post_json(self):
+        user = User.query.get(self.user_id)
         return {
                 "post_id": self.id,
                 "title": self.title,
                 "text": self.text, 
                 "date_posted": self.date_posted,
                 "likes": self.likes,
-                "user_id": self.user_id
-                # "comments" : 
+                "user_id": self.user_id, 
+                "username" :  user.username
         }
         
     @classmethod        # from FE to BE
