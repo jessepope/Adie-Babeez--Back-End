@@ -43,11 +43,14 @@ def all_posts_all_users():
 
 @post_bp.route("/<user_id>/all", methods=["GET", "DELETE"])
 def all_posts_a_user(user_id): 
-    all_posts = Post.query.filter_by(user_id=user_id)
+    all_posts = Post.query.filter_by(user_id=user_id).all()
     # get all posts of a specific user
     if request.method == "GET":
-        all_posts_response = [(post.make_post_json()) for post in all_posts]
-        return jsonify(all_posts_response), 200
+            all_posts_response = []
+            for post in all_posts:
+                post_with_comments = make_post_response_with_comments(post)
+                all_posts_response.append(post_with_comments)
+            return jsonify(all_posts_response), 200
     
     # delete all posts of a user
     else:
@@ -56,7 +59,7 @@ def all_posts_a_user(user_id):
             db.session.commit()
         return {"details": "all posts were successfully deleted"}, 200
 
-@post_bp.route("/<post_id>", methods=["GET", "DELETE", "PUT"])
+@post_bp.route("/<post_id>", methods=["GET", "DELETE", "PUT", "PATCH"])
 def a_post_a_user(post_id):
     post = Post.query.filter_by(id=post_id).first()
     if post:
@@ -77,6 +80,12 @@ def a_post_a_user(post_id):
             request_body = request.get_json()[0]
             post.title=request_body['title']
             post.text=request_body['text']
+            db.session.commit()
+            return jsonify(post.make_post_json()), 200
+        
+        elif request.method == "PATCH":
+            post.likes = post.likes + 1
+            db.session.commit()
             return jsonify(post.make_post_json()), 200
         
 # helper function 
