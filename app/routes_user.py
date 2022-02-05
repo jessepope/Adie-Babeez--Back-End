@@ -40,10 +40,8 @@ def all_users():
         return {"details": "all users were successfully deleted"}, 200
 
 
-@user_bp.route("/users/profile", methods=["GET", "DELETE", "PUT"])
-def edit_a_specific_users():
-    request_body = request.get_json()[0]
-    user_id = request_body["user_id"]  
+@user_bp.route("/users/profile/<user_id>", methods=["GET", "DELETE", "PUT"])
+def edit_a_specific_users(user_id):
     user = User.query.get(user_id)
     # get a user
     if request.method == "GET":
@@ -63,6 +61,7 @@ def edit_a_specific_users():
         
     # update a user's profile
     elif request.method == "PUT":
+        request_body = request.get_json()[0]
         if user:
             user.username=request_body['username'],
             user.email=request_body['email'],
