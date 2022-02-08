@@ -6,7 +6,7 @@ from app.models.user import User
 class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     text = db.Column(db.String)
-    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.datetime.utcnow())
+    date_posted = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=True)
     post_id = db.Column(db.Integer, db.ForeignKey("post.id"), nullable=True)
     
@@ -23,11 +23,12 @@ class Comment(db.Model):
         }
         
     @classmethod        # from FE to BE
-    def from_json(cls, request_body):
+    def from_json(cls, request_body, date_time):
         return cls(
             text=request_body['text'],
             user_id=request_body['user_id'],
-            post_id=request_body['post_id']
+            post_id=request_body['post_id'],
+            date_posted = date_time,
             )
     
 

@@ -1,28 +1,18 @@
-# post a comment
-# delete a comment (own comment or own post )  /** need to explore it */
-# edit a comment (own comment)
-# get all (sort by asc, dsc)
-
-
-# # get all - sort(asc, dsc based on date), show me the most liked
-# # delete a post (own post, delete all comments)
-# # edit post (own post)
-# # like post (update like count)
-# # 
-
 from flask import Blueprint, request, jsonify, make_response
 from app import db
 from app.models.post import Post
 from app.models.user import User
 from app.models.comment import Comment
+from sqlalchemy import asc, desc
+import datetime
 
 comment_bp = Blueprint("comment", __name__, url_prefix="/comments")
 
 @comment_bp.route("/newcomment", methods=["POST"])
 def create_comment():
     request_body = request.get_json()[0]
-    # try: 
-    new_comment = Comment.from_json(request_body)
+    date_time = datetime.datetime.utcnow()
+    new_comment = Comment.from_json(request_body, date_time)
     db.session.add(new_comment)
     db.session.commit()
     return make_response(new_comment.make_comment_json()), 200
