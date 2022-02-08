@@ -9,14 +9,16 @@ from app import db
 from app.models.post import Post
 from app.models.user import User
 from app.models.comment import Comment
+from sqlalchemy import asc, desc
+import datetime
 
 post_bp = Blueprint("post", __name__, url_prefix="/posts")
 
 @post_bp.route("/newpost", methods=["POST"])
 def create_post():
     request_body = request.get_json()[0]
-    # try: 
-    new_post = Post.from_json(request_body)
+    date_time = datetime.datetime.now()
+    new_post = Post.from_json(request_body, date_time)
     db.session.add(new_post)
     db.session.commit()
     return make_response(new_post.make_post_json()), 200
@@ -24,7 +26,7 @@ def create_post():
 
 @post_bp.route("/all", methods=["GET", "DELETE"])
 def all_posts_all_users():
-    all_posts = Post.query.all()
+    all_posts = Post.query.order_by(desc(Post.date_posted)).all()
     # if all_posts:
         # get all posts of all users
     if request.method == "GET":
@@ -43,7 +45,7 @@ def all_posts_all_users():
 
 @post_bp.route("/<user_id>/all", methods=["GET", "DELETE"])
 def all_posts_a_user(user_id): 
-    all_posts = Post.query.filter_by(user_id=user_id).all()
+    all_posts = Post.query.filter_by(user_id=user_id).order_by(desc(Post.date_posted)).all()
     # get all posts of a specific user
     if request.method == "GET":
             all_posts_response = []
