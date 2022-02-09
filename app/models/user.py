@@ -6,6 +6,7 @@ from flask import current_app
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    user_id_chatengine = db.Column(db.Integer)
     username = db.Column(db.String(50), unique= True, nullable=False)
     pronouns = db.Column(db.String(50))
     email = db.Column(db.String(80), unique=True, nullable=False)
@@ -38,5 +39,5 @@ class User(db.Model):
                 "class_name": self.class_name,
                 "campus": self.campus,
                 "bio": self.bio,
-                # "posts": self.posts  
+                "user_id_chatengine": self.user_id_chatengine
         }

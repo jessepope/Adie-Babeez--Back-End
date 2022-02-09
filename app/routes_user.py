@@ -40,7 +40,7 @@ def all_users():
         return {"details": "all users were successfully deleted"}, 200
 
 
-@user_bp.route("/users/profile/<user_id>", methods=["GET", "DELETE", "PUT"])
+@user_bp.route("/users/profile/<user_id>", methods=["GET", "DELETE", "PUT", "PATCH"])
 def edit_a_specific_users(user_id):
     user = User.query.get(user_id)
     # get a user
@@ -74,6 +74,12 @@ def edit_a_specific_users(user_id):
             return make_response(user.make_user_json()), 200
         else:
             return  {"details": f"User {user_id} not found"}, 404
+    elif request.method == "PATCH":
+        request_body = request.get_json()[0]
+        if user:
+            user.user_id_chatengine=request_body['user_id_chatengine']
+            db.session.commit()
+            return make_response(user.make_user_json()), 200
 
 
 @user_bp.route("/login", methods=["POST"])
