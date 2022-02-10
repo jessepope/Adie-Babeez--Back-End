@@ -24,6 +24,7 @@ def create_user():
     }
     response = requests.post("https://api.chatengine.io/users/", headers=headers_to_chat_engine, data=data)
     response_body = response.json()
+    print(f"response_body: {response_body}")
     new_user.user_id_chatengine = response_body["id"]
     db.session.commit()
     return jsonify(new_user.make_user_json()), 200
@@ -59,13 +60,13 @@ def edit_a_specific_users(user_id):
     # delete a user
     elif request.method == "DELETE":
         if user:
-            # # send delete request to ChatEngine
-            # user_id_chatengine = user.user_id_chatengine
-            # # user_id_chatengine=user_id_chatengine
-            # # , user_id_chatengine=166448
-            # request_url = url_for(`https://api.chatengine.io/users/${user_id_chatengine}/`)
-            # response = requests.delete((request_url), headers=headers_to_chat_engine)
-            # if response.status_code == 200:
+            # send delete request to ChatEngine
+            user_id_chatengine = user.user_id_chatengine
+            # user_id_chatengine=user_id_chatengine
+            # , user_id_chatengine=166448
+            request_url = url_for("https://api.chatengine.io/users/{user_id_chatengine}/")  // <>, {}, {{}}
+            response = requests.delete((request_url), headers=headers_to_chat_engine)
+            if response.status_code == 200:
             db.session.delete(user)
             db.session.commit()
             return {"details": "User was successfully deleted"}, 200
