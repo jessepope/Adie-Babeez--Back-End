@@ -6,7 +6,7 @@ import os
 import requests
 
 user_bp = Blueprint("user", __name__, url_prefix="")
-headers_to_chat_engine = {"PRIVATE-KEY": os.environ.get("CHAT_ENGINE_KEY")}
+
 
 
 @user_bp.route("/signup", methods=["POST"])
@@ -22,6 +22,7 @@ def create_user():
         "secret" : new_user.password,
         "email" : new_user.email
     }
+    headers_to_chat_engine = {"PRIVATE-KEY": os.environ.get("CHAT_ENGINE_KEY")}
     response = requests.post("https://api.chatengine.io/users/", headers=headers_to_chat_engine, data=data)
     response_body = response.json()
     print(f"response_body: {response_body}")
