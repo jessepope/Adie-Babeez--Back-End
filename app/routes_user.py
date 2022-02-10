@@ -22,13 +22,9 @@ def create_user():
         "secret" : new_user.password,
         "email" : new_user.email
     }
-    chat_engine_key = os.environ.get('CHAT_ENGINE_KEY')
-    print(chat_engine_key)
     headers_to_chat_engine = {"PRIVATE-KEY": os.environ.get('CHAT_ENGINE_KEY')}
-    print(headers_to_chat_engine)
     response = requests.post("https://api.chatengine.io/users/", headers=headers_to_chat_engine, data=data)
     response_body = response.json()
-    print(f"response_body: {response_body}")
     new_user.user_id_chatengine = response_body["id"]
     db.session.commit()
     return jsonify(new_user.make_user_json()), 200
@@ -65,14 +61,12 @@ def edit_a_specific_users(user_id):
     elif request.method == "DELETE":
         if user:
             # send delete request to ChatEngine
+            headers_to_chat_engine = {"PRIVATE-KEY": os.environ.get('CHAT_ENGINE_KEY')}
             user_id_chatengine = user.user_id_chatengine
-            # user_id_chatengine=user_id_chatengine
-            # , user_id_chatengine=166448
-            # request_url = url_for("https://api.chatengine.io/users/{user_id_chatengine}/")  
-            # response = requests.delete((request_url), headers=headers_to_chat_engine)
-            # if response.status_code == 200:
-            db.session.delete(user)
-            db.session.commit()
+            response = requests.delete((f"https://api.chatengine.io/users/{user_id_chatengine}/"), headers=headers_to_chat_engine)
+            if response.status_code == 200:
+                db.session.delete(user)
+                db.session.commit()
             return {"details": "User was successfully deleted"}, 200
         else:
             return {"details": f"User {user_id} not found"}, 404
@@ -89,15 +83,18 @@ def edit_a_specific_users(user_id):
             user.campus=request_body['campus'],
             user.bio=request_body['bio'],
             db.session.commit()
+            
+            # send a put request to ChatEngine
+            data = {
+                "username" : user.username,
+                "secret" : user.password
+            }
+            headers_to_chat_engine = {"PRIVATE-KEY": os.environ.get('CHAT_ENGINE_KEY')}
+            user_id_chatengine = user.user_id_chatengine
+            response = requests.put((f"https://api.chatengine.io/users/{user_id_chatengine}/"), headers=headers_to_chat_engine, data=data)
             return make_response(user.make_user_json()), 200
         else:
             return  {"details": f"User {user_id} not found"}, 404
-    elif request.method == "PATCH":
-        request_body = request.get_json()[0]
-        if user:
-            user.user_id_chatengine=request_body['user_id_chatengine']
-            db.session.commit()
-            return make_response(user.make_user_json()), 200
 
 
 @user_bp.route("/login", methods=["POST"])
