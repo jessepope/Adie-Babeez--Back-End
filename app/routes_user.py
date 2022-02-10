@@ -23,6 +23,7 @@ def create_user():
         "email" : new_user.email
     }
     headers_to_chat_engine = {"PRIVATE-KEY": os.environ.get("CHAT_ENGINE_KEY")}
+    print(headers_to_chat_engine)
     response = requests.post("https://api.chatengine.io/users/", headers=headers_to_chat_engine, data=data)
     response_body = response.json()
     print(f"response_body: {response_body}")
