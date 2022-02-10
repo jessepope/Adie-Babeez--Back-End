@@ -64,9 +64,9 @@ def edit_a_specific_users(user_id):
             user_id_chatengine = user.user_id_chatengine
             # user_id_chatengine=user_id_chatengine
             # , user_id_chatengine=166448
-            request_url = url_for("https://api.chatengine.io/users/{user_id_chatengine}/")  // <>, {}, {{}}
-            response = requests.delete((request_url), headers=headers_to_chat_engine)
-            if response.status_code == 200:
+            # request_url = url_for("https://api.chatengine.io/users/{user_id_chatengine}/")  
+            # response = requests.delete((request_url), headers=headers_to_chat_engine)
+            # if response.status_code == 200:
             db.session.delete(user)
             db.session.commit()
             return {"details": "User was successfully deleted"}, 200
