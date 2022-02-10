@@ -1,27 +1,33 @@
-from flask import Blueprint, request, jsonify, make_response
+from flask import Blueprint, request, jsonify, make_response, url_for
 from app import db
 from app.models.user import User
+from dotenv import load_dotenv
+import os
+import requests
 
 user_bp = Blueprint("user", __name__, url_prefix="")
+headers_to_chat_engine = {"PRIVATE-KEY": os.environ.get("CHAT_ENGINE_KEY")}
 
 
 @user_bp.route("/signup", methods=["POST"])
 def create_user():
     request_body = request.get_json()[0]
+    new_user = User.from_json(request_body)
+    db.session.add(new_user)
+    db.session.commit()
+    
+    # send post request to ChatEngine
+    data = {
+        "username" : new_user.username,
+        "secret" : new_user.password,
+        "email" : new_user.email
+    }
+    response = requests.post("https://api.chatengine.io/users/", headers=headers_to_chat_engine, data=data)
+    response_body = response.json()
+    new_user.user_id_chatengine = response_body["id"]
+    db.session.commit()
+    return jsonify(new_user.make_user_json()), 200
 
-    try:
-        new_user = User.from_json(request_body)
-        db.session.add(new_user)
-        db.session.commit()
-        return jsonify(new_user.make_user_json()), 200
-
-    except KeyError as err:
-        if "username" in err.args:
-            return {"details": f"Request body must include username with string type."}, 400
-        if "email" in err.args:
-            return {"details": f"Request body must include email with string type."}, 400
-        if "password" in err.args:
-            return {"details": f"Request body must include password with string type."}, 400
 
 
 @user_bp.route("/users/all", methods=["GET", "DELETE"])
@@ -40,7 +46,7 @@ def all_users():
         return {"details": "all users were successfully deleted"}, 200
 
 
-@user_bp.route("/users/profile/<user_id>", methods=["GET", "DELETE", "PUT", "PATCH"])
+@user_bp.route("/users/profile/<user_id>", methods=["GET", "DELETE", "PUT"])
 def edit_a_specific_users(user_id):
     user = User.query.get(user_id)
     # get a user
@@ -53,6 +59,13 @@ def edit_a_specific_users(user_id):
     # delete a user
     elif request.method == "DELETE":
         if user:
+            # # send delete request to ChatEngine
+            # user_id_chatengine = user.user_id_chatengine
+            # # user_id_chatengine=user_id_chatengine
+            # # , user_id_chatengine=166448
+            # request_url = url_for(`https://api.chatengine.io/users/${user_id_chatengine}/`)
+            # response = requests.delete((request_url), headers=headers_to_chat_engine)
+            # if response.status_code == 200:
             db.session.delete(user)
             db.session.commit()
             return {"details": "User was successfully deleted"}, 200

@@ -6,7 +6,7 @@ from flask import current_app
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    user_id_chatengine = db.Column(db.Integer)
+    user_id_chatengine = db.Column(db.Integer, unique=True)
     username = db.Column(db.String(50), unique= True, nullable=False)
     pronouns = db.Column(db.String(50))
     email = db.Column(db.String(80), unique=True, nullable=False)
@@ -26,7 +26,7 @@ class User(db.Model):
             pronouns=request_body['pronouns'],
             class_name=request_body['class_name'],
             campus=request_body['campus'],
-            bio=request_body['bio'],)
+            bio=request_body['bio'])
     
     # from BE to FE
     def make_user_json(self):
