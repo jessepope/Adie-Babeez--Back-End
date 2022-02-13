@@ -4,6 +4,7 @@ from app.models.user import User
 from dotenv import load_dotenv
 import os
 import requests
+from app.models.post import Post
 
 user_bp = Blueprint("user", __name__, url_prefix="")
 
@@ -53,7 +54,13 @@ def edit_a_specific_users(user_id):
     # get a user
     if request.method == "GET":
         if user:
-            return user.make_user_json(), 200
+            user_dict = user.make_user_json()
+            all_posts = Post.query.filter_by(user_id=user_id).order_by(Post.date_posted.desc()).all()
+            all_posts_response = []
+            for post in all_posts:
+                all_posts_response.append(post.make_post_json())
+            user_dict["posts"] = all_posts_response
+            return user_dict, 200
         else:
             return {"details": f"User {user_id} not found"}, 404
         
@@ -118,5 +125,3 @@ def verify_a_specific_user():
             return jsonify([{"message": "invalid password"}]), 400
     else:
         return jsonify([{"message": "invalid username or email"}]), 400
-
-# update user's location with google api
