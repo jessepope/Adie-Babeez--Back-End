@@ -4,6 +4,7 @@ from app.models.user import User
 from dotenv import load_dotenv
 import os
 import requests
+from app.models.post import Post
 
 user_bp = Blueprint("user", __name__, url_prefix="")
 
@@ -118,5 +119,3 @@ def verify_a_specific_user():
             return jsonify([{"message": "invalid password"}]), 400
     else:
         return jsonify([{"message": "invalid username or email"}]), 400
-
-# update user's location with google api
