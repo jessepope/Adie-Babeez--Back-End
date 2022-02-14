@@ -90,9 +90,11 @@ def edit_a_specific_users(user_id):
                 "username" : user.username,
                 "secret" : user.password
             }
+            print(f"data: {data}")
             headers_to_chat_engine = {"PRIVATE-KEY": os.environ.get('CHAT_ENGINE_KEY')}
             user_id_chatengine = user.user_id_chatengine
             response = requests.put((f"https://api.chatengine.io/users/{user_id_chatengine}/"), headers=headers_to_chat_engine, data=data)
+            print(f"response: {response}")
             return make_response(user.make_user_json()), 200
         else:
             return  {"details": f"User {user_id} not found"}, 404
